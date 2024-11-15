@@ -13,6 +13,40 @@ type Crypto struct {
 	Checksum *Module[ChecksumFunction] `json:"checksum"`
 }
 
+// Default Crypto with Scrypt, AES128 and Sha256
+func DefaultCrypto() *Crypto {
+	var (
+		kdf      = NewScrypt()
+		cipher   = NewAES128()
+		checksum = NewSha256()
+	)
+
+	return &Crypto{
+		KDF: &Module[KDFunction]{
+			Function: kdf.Function(),
+			Params:   kdf,
+		},
+		Cipher: &Module[CipherFunction]{
+			Function: cipher.Function(),
+			Params:   cipher,
+		},
+		Checksum: &Module[ChecksumFunction]{
+			Function: checksum.Function(),
+			Params:   checksum,
+		},
+	}
+}
+
+// NewCrypto with options or default
+func NewCrypto(options ...CryptoOption) (*Crypto, error) {
+	crypto := DefaultCrypto()
+	if err := CryptoOptions(options).Apply(crypto); err != nil {
+		return nil, err
+	}
+
+	return crypto, nil
+}
+
 // Encrypt secret key using password
 func (crypto *Crypto) Encrypt(secret, password []byte) error {
 	var (
