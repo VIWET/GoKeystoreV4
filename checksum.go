@@ -2,6 +2,11 @@ package gokeystorev4
 
 import "crypto/sha256"
 
+var _ ChecksumFunction = (&Sha256{})
+
+// Sha256 params
+const Sha256Name = "sha256"
+
 // Checksum function interface
 type ChecksumFunction interface {
 	Function() string
@@ -24,4 +29,4 @@ func (c *Sha256) Checksum(key, cipher []byte) []byte {
 }
 
 // Function name
-func (c *Sha256) Function() string { return "sha256" }
+func (c *Sha256) Function() string { return Sha256Name }

@@ -5,15 +5,21 @@ import (
 	"crypto/cipher"
 )
 
+var _ CipherFunction = (&AES128{})
+
 // Cipher function interface
 type CipherFunction interface {
 	Function() string
-	Encrypt(secret, key []byte) ([]byte, error)
-	Decrypt(key, message []byte) ([]byte, error)
+	Encrypt(data, key []byte) ([]byte, error)
+	Decrypt(key, data []byte) ([]byte, error)
 }
 
 // AES128 params
-const AES128KeyLen = 16
+const (
+	AES128KeyLen = 16
+
+	AES128Name = "aes-128-ctr"
+)
 
 // AES-128 params
 type AES128 struct {
@@ -60,4 +66,4 @@ func (c *AES128) Decrypt(key, data []byte) ([]byte, error) {
 }
 
 // Function name
-func (c *AES128) Function() string { return "aes-128-ctr" }
+func (c *AES128) Function() string { return AES128Name }
