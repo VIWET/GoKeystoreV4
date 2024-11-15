@@ -19,8 +19,11 @@ func RandomBytes(length int) []byte {
 // Hex string
 type Hex []byte
 
-// Salt
-type Salt = Hex
+// Type aliases
+type (
+	Salt = Hex
+	IV   = Hex
+)
 
 // imlp json.Marshaler for Hex
 func (h Hex) MarshalJSON() ([]byte, error) {
