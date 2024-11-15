@@ -21,8 +21,9 @@ type Hex []byte
 
 // Type aliases
 type (
-	Salt = Hex
-	IV   = Hex
+	Salt      = Hex
+	IV        = Hex
+	PublicKey = Hex
 )
 
 // imlp json.Marshaler for Hex

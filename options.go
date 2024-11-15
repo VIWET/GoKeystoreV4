@@ -5,8 +5,11 @@ import "fmt"
 // Generic option
 type Option[T any] func(T) error
 
-// Type alias
-type CryptoOption = Option[*Crypto]
+// Type aliases
+type (
+	CryptoOption   = Option[*Crypto]
+	KeystoreOption = Option[*Keystore]
+)
 
 // WithKDF sets KDFunction
 func WithKDF(kdf KDFunction) CryptoOption {
@@ -53,11 +56,43 @@ func WithChecksum(checksum ChecksumFunction) CryptoOption {
 	}
 }
 
+// WithCrypto creates and sets new Crypto with given options
+func WithCrypto(opts ...CryptoOption) KeystoreOption {
+	return func(keystore *Keystore) error {
+		crypto, err := NewCrypto(opts...)
+		if err != nil {
+			return err
+		}
+
+		keystore.Crypto = crypto
+		return nil
+	}
+}
+
+// WithPublicKey sets PublicKey
+func WithPublicKey(key PublicKey) KeystoreOption {
+	return func(keystore *Keystore) error {
+		keystore.PublicKey = key
+		return nil
+	}
+}
+
+// WithDescription sets Description
+func WithDescription(description string) KeystoreOption {
+	return func(keystore *Keystore) error {
+		keystore.Description = description
+		return nil
+	}
+}
+
 // Generic option slice
 type Options[T any] []Option[T]
 
-// Type aliase
-type CryptoOptions = Options[*Crypto]
+// Type aliases
+type (
+	CryptoOptions   = Options[*Crypto]
+	KeystoreOptions = Options[*Keystore]
+)
 
 // Apply all the options
 func (opts Options[T]) Apply(obj T) error {
