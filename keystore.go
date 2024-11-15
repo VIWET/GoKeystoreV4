@@ -2,8 +2,10 @@ package gokeystorev4
 
 import "github.com/google/uuid"
 
+// KeystoreVersion
 const KeystoreVersion = 4
 
+// KeystoreV4
 type Keystore struct {
 	Crypto      *Crypto   `json:"crypto"`
 	Description string    `json:"description,omitempty"`
@@ -22,6 +24,7 @@ func newKeystore(path string) *Keystore {
 	}
 }
 
+// Encrypt secret key at path using password and options
 func Encrypt(secret []byte, password, path string, opts ...KeystoreOption) (*Keystore, error) {
 	keystore := newKeystore(path)
 	if err := KeystoreOptions(opts).Apply(keystore); err != nil {
@@ -35,6 +38,7 @@ func Encrypt(secret []byte, password, path string, opts ...KeystoreOption) (*Key
 	return keystore, nil
 }
 
+// Decrypt secret key from keystore using password
 func Decrypt(keystore *Keystore, password string) ([]byte, error) {
 	return keystore.Crypto.Decrypt(ProcessPassword(password))
 }

@@ -48,11 +48,11 @@ func NewCrypto(options ...CryptoOption) (*Crypto, error) {
 }
 
 // Encrypt secret key using password
-func (crypto *Crypto) Encrypt(secret, password []byte) error {
+func (c *Crypto) Encrypt(secret, password []byte) error {
 	var (
-		kdf      = crypto.KDF.Params
-		cipher   = crypto.Cipher.Params
-		checksum = crypto.Checksum.Params
+		kdf      = c.KDF.Params
+		cipher   = c.Cipher.Params
+		checksum = c.Checksum.Params
 	)
 
 	key, err := kdf.DeriveKey(password)
@@ -65,18 +65,18 @@ func (crypto *Crypto) Encrypt(secret, password []byte) error {
 		return fmt.Errorf("failed to encrypt key: %w", err)
 	}
 
-	crypto.Cipher.Message = cip
-	crypto.Checksum.Message = checksum.Checksum(key, cip)
+	c.Cipher.Message = cip
+	c.Checksum.Message = checksum.Checksum(key, cip)
 
 	return nil
 }
 
 // Decrypt secret key using password
-func (crypto *Crypto) Decrypt(password []byte) ([]byte, error) {
+func (c *Crypto) Decrypt(password []byte) ([]byte, error) {
 	var (
-		kdf      = crypto.KDF.Params
-		cipher   = crypto.Cipher.Params
-		checksum = crypto.Checksum.Params
+		kdf      = c.KDF.Params
+		cipher   = c.Cipher.Params
+		checksum = c.Checksum.Params
 	)
 
 	key, err := kdf.DeriveKey(password)
@@ -84,8 +84,8 @@ func (crypto *Crypto) Decrypt(password []byte) ([]byte, error) {
 		return nil, fmt.Errorf("failed to derive key from password: %w", err)
 	}
 
-	cip := crypto.Cipher.Message
-	if !bytes.Equal(crypto.Checksum.Message, checksum.Checksum(key, cip)) {
+	cip := c.Cipher.Message
+	if !bytes.Equal(c.Checksum.Message, checksum.Checksum(key, cip)) {
 		return nil, fmt.Errorf("failed to validate key: invalid checksum")
 	}
 
