@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
-	"strings"
 )
 
 // RandomBytse generates random bytes sequence of given length
@@ -29,10 +28,6 @@ type (
 // imlp json.Marshaler for Hex
 func (h Hex) MarshalJSON() ([]byte, error) {
 	hexstr := hex.EncodeToString(h)
-	if len(h) > 0 {
-		hexstr = "0x" + hexstr
-	}
-
 	return json.Marshal(&hexstr)
 }
 
@@ -48,7 +43,6 @@ func (h *Hex) UnmarshalJSON(data []byte) error {
 		return err
 	}
 
-	hexstr = strings.TrimPrefix(hexstr, "0x")
 	*h, err = hex.DecodeString(hexstr)
 	if err != nil {
 		return err
